@@ -2,11 +2,8 @@ import { SrtSegment } from "./srt-segment"
 import { SrtSegmentCondition } from "./srt-segment-condition"
 
 export class SrtReadingControl {
-    private segment: SrtSegment
-
-    constructor () {
-        this.segment = SrtSegment.SEGMENT_SEPARATOR
-    }
+    private segment: SrtSegment = SrtSegment.SEGMENT_SEPARATOR
+    private identifier: number = null
 
     public getSegment(srtLine: string): SrtSegment {
         const conditions: SrtSegmentCondition[] = [{
@@ -24,6 +21,12 @@ export class SrtReadingControl {
         }]
 
         this.segment = conditions.find(condition => condition.satisfied).segment
+
+        if (this.segment === SrtSegment.IDENTIFIER)
+            this.identifier = Number(srtLine.trim())
+
+        if (this.segment === SrtSegment.SEGMENT_SEPARATOR)
+            this.identifier = null
 
         return this.segment
     }   
